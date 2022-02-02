@@ -7,15 +7,15 @@ import AddUserForm from './components/AddUserForm';
 
 function App() {
 
+  //DB
   const userData = [
     { id: uuidv4(), name: 'Lucas', username: 'Patrisio69' },
     { id: uuidv4(), name: 'Facundo', username: 'Facs48' },
     { id: uuidv4(), name: 'Jaume', username: 'Exódya21' },
   ]
 
-
   // state
-  const [users, setUsers] = useState(userData)
+  const [users, setUsers] = useState([])
 
   // Add users
   const addUser = (user) => {
@@ -26,6 +26,37 @@ function App() {
     ])
   }
 
+  //Eliminar Usuario
+  const deleteUser = (id) => {
+    const arrayFiltrado = users.filter(user => user.id !== id)
+    setUsers(arrayFiltrado)
+  }
+
+  //Editar usuarios
+  const [editing, setEditing] = useState(false);
+
+  const [currentUser, setCurrentUser] = useState({
+    id: null, name: '', username: ''
+  });
+
+  const editRow = (user) => {
+    setEditing(true)
+    setCurrentUser({
+      id: user.id, name: user.name, username: user.username
+    })
+  }
+
+  const updateUser = (id, updatedUser) => {
+    setEditing(false);
+
+    setUsers(
+      users.map(
+        user => (user.id === id ? updatedUser : user)
+      )
+    )
+  }
+
+
   return (
   <div className="App-header">
     <header className=''>
@@ -35,12 +66,11 @@ function App() {
     <h1 className='App'>CRUD App with Hooks</h1>
     <div className='flex-row table'>
       <div className='flex-large'>
-        <h2>Add User</h2>
-        <AddUserForm addUser={addUser} />
+        <AddUserForm addUser={addUser} editing={editing} currentUser={currentUser} updateUser={updateUser} />
       </div>
       <div className='flex-large'>
         <h2>View User</h2>
-        <UserTable users={users} />
+        <UserTable users={users} deleteUser={deleteUser} editRow={editRow}/>
       </div>
     </div>
 
